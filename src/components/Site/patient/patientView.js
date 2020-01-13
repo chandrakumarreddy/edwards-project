@@ -5,8 +5,20 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import C3Chart from "react-c3js";
+import "c3/c3.css";
 import Header from "../../Header/header";
 import Tabs from "../../shared/Tabs";
+
+const data = {
+  columns: [
+    [
+      "data1",
+      ...Array.from({ length: 30 }, (v, i) => Math.PI * 10 * Math.random() * 10)
+    ]
+  ],
+  type: "spline"
+};
 
 const useStyles = makeStyles(theme => ({
   bgGray: {
@@ -17,6 +29,10 @@ const useStyles = makeStyles(theme => ({
   container: {
     width: "90%",
     margin: "2rem auto 0"
+  },
+  w75: {
+    width: "75%",
+    margin: "auto"
   },
   details: {
     display: "flex",
@@ -44,6 +60,9 @@ const useStyles = makeStyles(theme => ({
   },
   yellow: {
     color: "yellow"
+  },
+  chart1: {
+    border: "1px solid gray"
   }
 }));
 
@@ -82,7 +101,18 @@ export default function PatientView({ match: { params }, history }) {
         <Box className={`${classes.flex} ${classes.mtb} ${classes.yellow}`}>
           <NotificationsNoneIcon className={classes.mr1} /> 2 Alarms available
         </Box>
-        <Tabs />
+        <Tabs
+          tab1={() => (
+            <Box className={`${classes.chart1} ${classes.w75}`}>
+              <C3Chart
+                data={data}
+                legend={{ hide: true }}
+                size={{ height: 150 }}
+                padding={{ left: 0, right: 0, top: 0, bottom: 0 }}
+              />
+            </Box>
+          )}
+        />
       </Box>
     </Box>
   );
