@@ -1,24 +1,24 @@
 import React from "react";
-import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import C3Chart from "react-c3js";
+import SpeedIcon from "@material-ui/icons/Speed";
+import ListIcon from "@material-ui/icons/List";
+import AppsIcon from "@material-ui/icons/Apps";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import "c3/c3.css";
 import Header from "../../Header/header";
 import Tabs from "../../shared/Tabs";
-
-const data = {
-  columns: [
-    [
-      "data1",
-      ...Array.from({ length: 30 }, (v, i) => Math.PI * 10 * Math.random() * 10)
-    ]
-  ],
-  type: "spline"
-};
+import Label from "./label";
+import { data, data1 } from "./data";
+import SpeedMeter from "../../shared/SpeedMeter/SpeedMeter";
 
 const useStyles = makeStyles(theme => ({
   bgGray: {
@@ -28,10 +28,10 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     width: "90%",
-    margin: "2rem auto 0"
+    margin: "1rem auto 0"
   },
-  w75: {
-    width: "75%",
+  w85: {
+    width: "85%",
     margin: "auto"
   },
   details: {
@@ -49,11 +49,11 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2)
   },
   mr1: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(1)
   },
   mtb: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2)
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   },
   pointer: {
     cursor: "pointer"
@@ -61,13 +61,42 @@ const useStyles = makeStyles(theme => ({
   yellow: {
     color: "yellow"
   },
-  chart1: {
-    border: "1px solid gray"
+  green: { color: "green" },
+  miniCard: {
+    padding: "4px !important",
+    backgroundColor: "darkseagreen",
+    display: "flex",
+    justifyContent: "space-between"
+  },
+  menuIcons: {
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: theme.spacing(1)
+  },
+  mlr: {
+    margin: "0 3px",
+    cursor: "pointer"
+  },
+  fillGreen: {
+    fill: "green"
+  },
+  flexCenter: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "center"
   }
 }));
 
 export default function PatientView({ match: { params }, history }) {
+  const [selected, setSelected] = React.useState("appIcon");
   const classes = useStyles();
+  const selectedStyle = menu => {
+    return `${selected === menu ? classes.fillGreen : ""}`;
+  };
+  const updateMenu = menu => {
+    setSelected(menu);
+  };
+
   return (
     <Box className={classes.bgGray}>
       <Header
@@ -93,7 +122,7 @@ export default function PatientView({ match: { params }, history }) {
           </Box>
         </Box>
         <Box className={classes.flex}>
-          <Typography component="h1" variant="h3">
+          <Typography component="h3" variant="h4">
             Micheal Wilson
           </Typography>{" "}
           <Box className={classes.ml2}>(Male, 56 years)</Box>
@@ -103,13 +132,61 @@ export default function PatientView({ match: { params }, history }) {
         </Box>
         <Tabs
           tab1={() => (
-            <Box className={`${classes.chart1} ${classes.w75}`}>
-              <C3Chart
-                data={data}
-                legend={{ hide: true }}
-                size={{ height: 150 }}
-                padding={{ left: 0, right: 0, top: 0, bottom: 0 }}
-              />
+            <Box className={`${classes.w85}`}>
+              <C3Chart data={data} size={{ height: 160 }} />
+              <Box className={classes.menuIcons}>
+                <Box className={classes.mlr}>
+                  <AppsIcon
+                    className={selectedStyle("appIcon")}
+                    onClick={() => updateMenu("appIcon")}
+                  />
+                </Box>
+                <Box className={classes.mlr}>
+                  <SpeedIcon
+                    className={selectedStyle("speedIcon")}
+                    onClick={() => updateMenu("speedIcon")}
+                  />
+                </Box>
+                <Box className={classes.mlr}>
+                  <ListIcon
+                    className={selectedStyle("listIcon")}
+                    onClick={() => updateMenu("listIcon")}
+                  />
+                </Box>
+              </Box>
+              {selected === "appIcon" && (
+                <Grid container spacing={1}>
+                  {[1, 2, 3, 4].map(() => (
+                    <Grid item xs={6} key={Math.random()}>
+                      <Card>
+                        <CardContent className={classes.miniCard}>
+                          <C3Chart
+                            data={data1}
+                            size={{ height: 120, width: 350 }}
+                            legend={{
+                              hide: true
+                            }}
+                          />
+                          <Label />
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
+              {selected === "speedIcon" && (
+                <Grid container spacing={5}>
+                  {[1, 2, 3, 4].map((_, index) => (
+                    <Grid item xs={3} key={index}>
+                      <Card>
+                        <CardContent>
+                          <SpeedMeter index={index} />
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
             </Box>
           )}
         />
